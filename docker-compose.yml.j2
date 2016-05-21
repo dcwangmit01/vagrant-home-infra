@@ -1,0 +1,94 @@
+# zoneminder:
+#   image: aptalca/docker-zoneminder
+#   privileged: true
+#   ports:
+#     - 8080:80
+#   volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - /docker/zoneminder/config:/config:rw
+
+nginx:
+  image: nginx
+  ports:
+    - 80:80
+    - 443:443
+    - 6697:6697
+  volumes:
+    - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
+    - /docker/nginx/web:/var/www
+    - /vagrant/secure/decrypted/ssl:/etc/ssl:ro
+    - /vagrant/conf/dot.htpasswd:/dot.htpasswd:ro
+#    - /vagrant/conf/nginx_sites.conf:/tmp/touch:ro
+
+wp:
+  image: wordpress
+  links:
+    - wpdb:mysql
+  ports:
+    - 10080:80
+  volumes:
+    - /docker/wp/var/www/html:/var/www/html
+
+wpdb:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: {{REPLACE_ME}}
+  volumes:
+    - /docker/wpdb/var/lib/mysql:/var/lib/mysql
+
+# wp2:
+#   image: wordpress
+#   links:
+#     - wpdb2:mysql
+#   ports:
+#     - 20080:80
+#   volumes:
+#     - /docker/wp2/var/www/html:/var/www/html
+
+# wpdb2:
+#   image: mariadb
+#   environment:
+#     MYSQL_ROOT_PASSWORD: {{REPLACE_ME}}
+#   volumes:
+#     - /docker/wpdb2/var/lib/mysql:/var/lib/mysql
+
+
+git:
+  # https://hub.docker.com/r/unixtastic/git-ssh-server/
+  image: rastasheep/ubuntu-sshd
+  ports:
+    - "2222:22"
+  command: bash -c "apt-get update; apt-get install -y git; rm -f /etc/ssh/ssh_host_*; dpkg-reconfigure openssh-server; useradd git -m -G root -s /bin/bash -p '*'; mkdir -p /home/git/.ssh; cp /tmp/authorized_keys /home/git/.ssh/authorized_keys; chown -R git:git /home/git; echo 'git ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/git; /usr/sbin/sshd -D"
+  volumes:
+    - /docker/git/home/git:/home/git
+    - /vagrant/conf/authorized_keys:/tmp/authorized_keys:ro
+
+# plex:
+#   # https://github.com/timhaak/docker-plex
+#   image: timhaak/plex
+#   ports:
+#     - 32400:32400
+#   volumes:
+#     - /docker/plex/config:/config
+#     - /autofs/media:/media
+#
+#   # After creation:
+#   # sudo emacs /docker/plex/config/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
+#   # Add:  allowedNetworks="192.168.1.0/255.255.255.0"
+
+dyndns:
+  image: jacobsanford/route53-dyndns
+  environment:
+    AWS_ACCESS_KEY_ID: {{REPLACE_ME}}
+    AWS_SECRET_ACCESS_KEY: {{REPLACE_ME}}
+    AWS_CONNECTION_REGION: us-east-1
+    ROUTE53_DOMAIN_A_RECORD: davidwang.com
+    ROUTE53_IP_URL: http://www.whatismypublicip.com/
+    ROUTE53_UPDATE_FREQUENCY: 3600
+
+#znc:
+#  image: jimeh/znc
+#  ports:
+#    - 6667:6667
+#  volumes:
+#    - /docker/znc/znc-data:/znc-data
