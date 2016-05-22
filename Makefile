@@ -1,5 +1,7 @@
 config:
-	j2 
+	j2 -f yaml Vagrantfile.j2 config.yaml > Vagrantfile
+	j2 -f yaml docker-compose.yaml.j2 config.yaml > docker-compose.yaml
+
 deps:
 	@if [ `uname` = "Darwin" ]; then \
 	  if ! which brew; then \
@@ -24,7 +26,8 @@ deps:
 	  fi; \
 	  if ! which j2; then \
 	    echo "Installing J2CLI"; \
-	    pip install j2cli; \
+            pip install j2cli; \
+            pip install j2cli[yaml]; \
 	  fi; \
 	fi
 

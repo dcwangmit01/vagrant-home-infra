@@ -1,0 +1,4 @@
+*.private
+backups/
+Vagrantfile
+docker-compose.yaml

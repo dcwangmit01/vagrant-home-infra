@@ -1,24 +1,22 @@
-# zoneminder:
-#   image: aptalca/docker-zoneminder
-#   privileged: true
-#   ports:
-#     - 8080:80
-#   volumes:
-#     - /etc/localtime:/etc/localtime:ro
-#     - /docker/zoneminder/config:/config:rw
+dyndns:
+  image: jacobsanford/route53-dyndns
+  environment:
+    AWS_ACCESS_KEY_ID: {{ dyndns.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: {{ dyndns.AWS_SECRET_ACCESS_KEY }}
+    AWS_CONNECTION_REGION: {{ dyndns.AWS_CONNECTION_REGION }}
+    ROUTE53_DOMAIN_A_RECORD: {{ dyndns.ROUTE53_DOMAIN_A_RECORD }}
+    ROUTE53_IP_URL: http://www.whatismypublicip.com/
+    ROUTE53_UPDATE_FREQUENCY: 3600
 
 nginx:
   image: nginx
   ports:
     - 80:80
     - 443:443
-    - 6697:6697
   volumes:
-    - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
     - /docker/nginx/web:/var/www
+    - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
     - /vagrant/secure/decrypted/ssl:/etc/ssl:ro
-    - /vagrant/conf/dot.htpasswd:/dot.htpasswd:ro
-#    - /vagrant/conf/nginx_sites.conf:/tmp/touch:ro
 
 wp:
   image: wordpress
@@ -32,29 +30,11 @@ wp:
 wpdb:
   image: mariadb
   environment:
-    MYSQL_ROOT_PASSWORD: {{REPLACE_ME}}
+    MYSQL_ROOT_PASSWORD: {{ wpdb.MYSQL_ROOT_PASSWORD }}
   volumes:
     - /docker/wpdb/var/lib/mysql:/var/lib/mysql
 
-# wp2:
-#   image: wordpress
-#   links:
-#     - wpdb2:mysql
-#   ports:
-#     - 20080:80
-#   volumes:
-#     - /docker/wp2/var/www/html:/var/www/html
-
-# wpdb2:
-#   image: mariadb
-#   environment:
-#     MYSQL_ROOT_PASSWORD: {{REPLACE_ME}}
-#   volumes:
-#     - /docker/wpdb2/var/lib/mysql:/var/lib/mysql
-
-
 git:
-  # https://hub.docker.com/r/unixtastic/git-ssh-server/
   image: rastasheep/ubuntu-sshd
   ports:
     - "2222:22"
@@ -74,17 +54,7 @@ git:
 #
 #   # After creation:
 #   # sudo emacs /docker/plex/config/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-#   # Add:  allowedNetworks="192.168.1.0/255.255.255.0"
-
-dyndns:
-  image: jacobsanford/route53-dyndns
-  environment:
-    AWS_ACCESS_KEY_ID: {{REPLACE_ME}}
-    AWS_SECRET_ACCESS_KEY: {{REPLACE_ME}}
-    AWS_CONNECTION_REGION: us-east-1
-    ROUTE53_DOMAIN_A_RECORD: davidwang.com
-    ROUTE53_IP_URL: http://www.whatismypublicip.com/
-    ROUTE53_UPDATE_FREQUENCY: 3600
+#   # Add:  allowedNetworks="192.168.3.0/255.255.255.0"
 
 #znc:
 #  image: jimeh/znc
@@ -92,3 +62,12 @@ dyndns:
 #    - 6667:6667
 #  volumes:
 #    - /docker/znc/znc-data:/znc-data
+
+# zoneminder:
+#   image: aptalca/docker-zoneminder
+#   privileged: true
+#   ports:
+#     - 8080:80
+#   volumes:
+#     - /docker/zoneminder/config:/config:rw
+#     - /etc/localtime:/etc/localtime:ro
