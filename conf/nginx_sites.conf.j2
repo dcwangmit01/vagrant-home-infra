@@ -1,0 +1,67 @@
+## redirect http to https for all hosts
+server {
+    listen       80;
+    return       301 https://$host$request_uri;
+}
+
+## redirect https://domain.com to https://www.domain.com
+server {
+    listen       443;
+    server_name  {{ nginx.ssl.domain.name }};
+    return       301 https://www.{{ nginx.ssl.domain.name }}$request_uri;
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    /etc/ssl/{{ nginx.ssl.domain.pem }};
+    ssl_certificate_key    /etc/ssl/{{ nginx.ssl.domain.key }};
+}
+
+## serve https://www.domain.com
+### Rate limit the below
+limit_req_zone  $binary_remote_addr  zone=one:10m   rate=5r/m;
+server {
+    listen       443;
+    server_name  www.{{ nginx.ssl.domain.name }};
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    /etc/ssl/{{ nginx.ssl.domain.pem }};
+    ssl_certificate_key    /etc/ssl/{{ nginx.ssl.domain.key }};
+
+    location / {
+        proxy_pass http://{{ vagrant.address }}:10080;
+        proxy_set_header        Host            $host;
+        proxy_set_header        X-Real-IP       $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location ~* wp\-login\.php {
+         limit_req   zone=one  burst=1 nodelay;
+         proxy_pass http://{{ vagrant.address }}:10080;
+         proxy_set_header        Host            $host;
+         proxy_set_header        X-Real-IP       $remote_addr;
+         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+## serve https://s.domain.com
+server {
+    listen       443;
+    server_name  {{ nginx.ssl.s_domain.name }};
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    /etc/ssl/{{ nginx.ssl.s_domain.pem }};
+    ssl_certificate_key    /etc/ssl/{{ nginx.ssl.s_domain.key }};
+    autoindex on;
+ 
+    location / {
+     	root /var/www;
+	index index.html;
+    }
+
+    location /whatismyip {
+        return 200 "ip: $remote_addr";
+        add_header Content-Type text/plain;
+    }
+}
+

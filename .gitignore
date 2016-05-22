@@ -1,4 +1,7 @@
 *.private
+.vagrant/
 backups/
+
 Vagrantfile
 docker-compose.yaml
+conf/nginx_sites.conf
