@@ -2,6 +2,7 @@ config:
 	j2 -f yaml Vagrantfile.j2 config.yaml > Vagrantfile
 	j2 -f yaml docker-compose.yaml.j2 config.yaml > docker-compose.yaml
 	j2 -f yaml conf/nginx_sites.conf.j2 config.yaml > conf/nginx_sites.conf
+	j2 -f yaml conf/authorized_keys.j2 config.yaml > conf/authorized_keys
 
 deps:
 	@if [ `uname` = "Darwin" ]; then \
