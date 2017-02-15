@@ -43,6 +43,19 @@ git:
     - /docker/git/home/git:/home/git
     - /vagrant/conf/authorized_keys:/tmp/authorized_keys:ro
 
+aptcacherng:
+  image: minimum2scp/apt-cacher-ng
+  ports:
+    - "3142:3142"
+  environment:
+    - ACNG_BACKENDS_DEBIAN=http://mirrors.us.kernel.org/debian/
+    - ACNG_BACKENDS_UBUNTU=http://mirrors.us.kernel.org/ubuntu/
+  volumes:
+    - /docker/aptcacherng/var/cache:/var/cache
+
+# docker run -d -p 3142:3142 -e ACNG_BACKENDS_DEBIAN=http://ftp.jp.debian.org/debian/ minimum2scp/apt-cacher-ng
+# export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker stop $ID; docker rm $ID; make config; docker-compose up -d; sleep 1; export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker exec -it $ID bash
+
 # plex:
 #   # https://github.com/timhaak/docker-plex
 #   image: timhaak/plex
