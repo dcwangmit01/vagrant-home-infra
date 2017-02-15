@@ -72,8 +72,9 @@ Vagrant.configure(2) do |config|
   #####################################################################
   # Custom Configuration
 
-  # Before "vagrant up", install this plugin
-  #   vagrant plugin install vagrant-vbguest
+  # Enable ssh forwarding for ssh-agent
+  config.ssh.forward_x11 = true
+  config.ssh.forward_agent = true
 
   config.vm.define "docker" do |docker|
     $address = "{{ vagrant.address }}"
@@ -81,7 +82,7 @@ Vagrant.configure(2) do |config|
     $interface = "{{ vagrant.interface }}"
     $bridge = "{{ vagrant.bridge_id }}"
 
-    docker.vm.box = "ubuntu/trusty64"
+    docker.vm.box = "bento/ubuntu-16.04"
 
     # Network Configuration (setups up eth1, eth0 remains NAT)
     docker.vm.network "public_network",
@@ -98,13 +99,12 @@ Vagrant.configure(2) do |config|
                         args: [ $gateway, $interface ],
                         inline: <<-SHELL
       cd /vagrant/conf
-      chmod 755 setup.sh && ./setup.sh
+      set -euo pipefail
+      chmod 755 setup.sh && ./setup.sh 2>&1 | tee /tmp/install.log
       route add default gw $1 $2
       cd /vagrant
       docker-compose up -d
     SHELL
-
-    docker.ssh.forward_x11 = true
 
     # Install the caching plugin if you want to take advantage of the cache
     # $ vagrant plugin install vagrant-cachier
