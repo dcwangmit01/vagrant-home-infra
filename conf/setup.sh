@@ -1,3 +1,7 @@
+#!/bin/bash
+set -x
+set -euo pipefail
+
 # set the fastest ubuntu mirror
 if [ ! -f /etc/apt/sources.list.orig ] ; then
     sudo mv /etc/apt/sources.list /etc/apt/sources.list.orig
@@ -41,4 +45,5 @@ if ! cat /etc/auto.master |grep auto.autofs; then
     sudo service autofs restart
 fi
 
+sudo pip install --upgrade pip
 sudo apt-get autoremove -y

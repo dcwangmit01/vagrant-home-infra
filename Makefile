@@ -33,6 +33,12 @@ deps:
 	  fi; \
 	fi
 
+tools:
+	@# install secure: a gpg multiparty encryption wrapper
+	if ! which secure; then \
+	    curl -s https://raw.githubusercontent.com/dcwangmit01/secure/master/install.sh | bash; \
+	fi
+
 encrypt:
 	secure encrypt
 
