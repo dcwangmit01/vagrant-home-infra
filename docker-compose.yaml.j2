@@ -47,9 +47,9 @@ aptcacherng:
   image: minimum2scp/apt-cacher-ng
   ports:
     - "3142:3142"
-  environment:
-    - ACNG_BACKENDS_DEBIAN=http://mirrors.us.kernel.org/debian/
-    - ACNG_BACKENDS_UBUNTU=http://mirrors.us.kernel.org/ubuntu/
+# environment:
+  # - ACNG_BACKENDS_DEBIAN=http://mirrors.us.kernel.org/debian/
+  # - ACNG_BACKENDS_UBUNTU=http://mirrors.us.kernel.org/ubuntu/
   volumes:
     - /docker/aptcacherng/var/cache:/var/cache
 
