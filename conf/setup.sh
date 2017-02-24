@@ -37,7 +37,6 @@ done
 # Persist the configuration files for several tools
 declare -A from_to_files
 from_to_files=( \
-    ["/vagrant/custom/00aptproxy"]="/etc/apt/apt.conf.d/00aptproxy" \
     ["/vagrant/custom/dot.gitconfig"]="/home/vagrant/.gitconfig" \
     ["/vagrant/custom/dot.emacs"]="/home/vagrant/.emacs" \
     ["/vagrant/custom/dot.vimrc"]="/home/vagrant/.vimrc" \
@@ -60,6 +59,16 @@ done
 
 #####################################################################
 # Setup Operating System and base utils from apt
+
+# set the fastest ubuntu mirror
+if [ ! -f /etc/apt/sources.list.orig ] ; then
+    mv /etc/apt/sources.list /etc/apt/sources.list.orig
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list
+    echo "deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse" >> /etc/apt/sources.list
+    cat /etc/apt/sources.list.orig >> /etc/apt/sources.list
+fi
 
 # Upgrade OS
 apt-get update
@@ -109,6 +118,11 @@ if ! which docker-compose; then
     pip install -U docker-compose
 fi
 
+# Install letsencrypt
+if ! which letsencrypt; then
+    # https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+    apt-get -yq install letsencrypt
+fi
 
 # Install NFS automount and configure it to automount from the file share
 apt-get install -y autofs smbclient cifs-utils
@@ -118,5 +132,4 @@ if ! cat /etc/auto.master |grep auto.autofs; then
     mkdir -p /autofs
     service autofs restart
 fi
-
 
