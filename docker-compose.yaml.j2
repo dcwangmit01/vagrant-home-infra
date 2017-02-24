@@ -16,6 +16,7 @@ nginx:
   volumes:
     - /docker/nginx/web:/var/www
     - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
+    - /vagrant/conf/htpasswd:/etc/nginx/htpasswd:ro
     - /vagrant/secure/decrypted/ssl:/etc/ssl:ro
     - /etc/letsencrypt:/etc/letsencrypt:ro
 
@@ -56,6 +57,14 @@ aptcacherng:
 
 # docker run -d -p 3142:3142 -e ACNG_BACKENDS_DEBIAN=http://ftp.jp.debian.org/debian/ minimum2scp/apt-cacher-ng
 # export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker stop $ID; docker rm $ID; make config; docker-compose up -d; sleep 1; export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker exec -it $ID bash
+
+
+registry: # docker registry
+  image: registry
+  ports:
+  - 5000:5000
+  volumes:
+  - /docker/registry/var/lib/registry:/var/lib/registry
 
 # plex:
 #   # https://github.com/timhaak/docker-plex

@@ -6,3 +6,7 @@ Vagrantfile
 docker-compose.yaml
 conf/nginx_sites.conf
 conf/authorized_keys
+conf/htpasswd
+
+.#*
+.DS_Store

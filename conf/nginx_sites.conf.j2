@@ -58,10 +58,10 @@ server {
 }
 
 
-## serve https://docker.domain.com
+## serve https://registry.domain.com
 server {
     listen       443;
-    server_name  docker.{{ nginx.domain.name }};
+    server_name  registry.{{ nginx.domain.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
@@ -74,7 +74,9 @@ server {
         proxy_set_header        Host            $host;
         proxy_set_header        X-Real-IP       $remote_addr;
         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
+        auth_basic "Authentication Required";
+        auth_basic_user_file /etc/nginx/htpasswd;
+   }
 }
 
 ## serve https://pvr.domain.com
