@@ -17,6 +17,7 @@ nginx:
     - /docker/nginx/web:/var/www
     - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
     - /vagrant/secure/decrypted/ssl:/etc/ssl:ro
+    - /etc/letsencrypt:/etc/letsencrypt:ro
 
 wp:
   image: wordpress
