@@ -123,12 +123,6 @@ if ! which j2; then
     pip install -U j2cli
 fi
 
-# Install letsencrypt
-if ! which letsencrypt; then
-    # https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
-    apt-get -yq install letsencrypt
-fi
-
 # Install NFS automount and configure it to automount from the file share
 apt-get install -y autofs smbclient cifs-utils
 if ! cat /etc/auto.master |grep auto.autofs; then
