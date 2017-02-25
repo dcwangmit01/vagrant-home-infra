@@ -1,3 +1,4 @@
+
 dyndns:
   image: jacobsanford/route53-dyndns
   environment:
@@ -7,6 +8,7 @@ dyndns:
     ROUTE53_DOMAIN_A_RECORD: {{ dyndns.ROUTE53_DOMAIN_A_RECORD }}
     ROUTE53_IP_URL: http://www.whatismypublicip.com/
     ROUTE53_UPDATE_FREQUENCY: 3600
+
 
 nginx:
   image: nginx
@@ -18,7 +20,7 @@ nginx:
     - /vagrant/conf/nginx_sites.conf:/etc/nginx/conf.d/default.conf:ro
     - /vagrant/conf/htpasswd:/etc/nginx/htpasswd:ro
     - /vagrant/secure/decrypted/ssl:/etc/ssl:ro
-    - /etc/letsencrypt:/etc/letsencrypt:ro
+    - /docker/letsencrypt/etc/letsencrypt:/etc/letsencrypt:ro
 
 wp:
   image: wordpress
@@ -29,12 +31,14 @@ wp:
   volumes:
     - /docker/wp/var/www/html:/var/www/html
 
+
 wpdb:
   image: mariadb
   environment:
     MYSQL_ROOT_PASSWORD: {{ wpdb.MYSQL_ROOT_PASSWORD }}
   volumes:
     - /docker/wpdb/var/lib/mysql:/var/lib/mysql
+
 
 git:
   image: rastasheep/ubuntu-sshd
@@ -44,6 +48,7 @@ git:
   volumes:
     - /docker/git/home/git:/home/git
     - /vagrant/conf/authorized_keys:/tmp/authorized_keys:ro
+
 
 aptcacherng:
   image: minimum2scp/apt-cacher-ng
@@ -55,16 +60,17 @@ aptcacherng:
   volumes:
     - /docker/aptcacherng/var/cache:/var/cache
 
-# docker run -d -p 3142:3142 -e ACNG_BACKENDS_DEBIAN=http://ftp.jp.debian.org/debian/ minimum2scp/apt-cacher-ng
-# export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker stop $ID; docker rm $ID; make config; docker-compose up -d; sleep 1; export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker exec -it $ID bash
-
 
 registry: # docker registry
-  image: registry
+  image: registry:2
   ports:
   - 5000:5000
   volumes:
   - /docker/registry/var/lib/registry:/var/lib/registry
+
+
+#####################################################################
+# Notes
 
 # plex:
 #   # https://github.com/timhaak/docker-plex
@@ -79,18 +85,7 @@ registry: # docker registry
 #   # sudo emacs /docker/plex/config/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
 #   # Add:  allowedNetworks="192.168.3.0/255.255.255.0"
 
-#znc:
-#  image: jimeh/znc
-#  ports:
-#    - 6667:6667
-#  volumes:
-#    - /docker/znc/znc-data:/znc-data
 
-# zoneminder:
-#   image: aptalca/docker-zoneminder
-#   privileged: true
-#   ports:
-#     - 8080:80
-#   volumes:
-#     - /docker/zoneminder/config:/config:rw
-#     - /etc/localtime:/etc/localtime:ro
+# restart only apt-cache and connect with bash
+# export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker stop $ID; docker rm $ID; make config; docker-compose up -d; sleep 1; export ID=`docker ps|grep apt-cacher |awk '{print $1}'`; docker exec -it $ID bash
+

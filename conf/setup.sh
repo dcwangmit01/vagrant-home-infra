@@ -81,7 +81,7 @@ apt-get -y autoremove
 # xauth: to forward X11 programs to the host machine
 apt-get -yq install mysql-client unzip dc gnupg moreutils \
 	git bridge-utils traceroute nmap dhcpdump wget curl siege whois \
-	emacs24-nox screen tree git \
+	emacs24-nox screen tree git jq \
 	apache2-utils \
 	python-pip python-dev \
 	xauth
@@ -116,6 +116,11 @@ fi
 if ! which docker-compose; then
     pip install --upgrade pip
     pip install -U docker-compose
+fi
+
+# Install j2cli
+if ! which j2; then
+    pip install -U j2cli
 fi
 
 # Install letsencrypt
