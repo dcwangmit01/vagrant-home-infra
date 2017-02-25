@@ -37,6 +37,7 @@ done
 # Persist the configuration files for several tools
 declare -A from_to_files
 from_to_files=( \
+    ["/vagrant/custom/certbot.cron"]="/etc/cron.weekly/certbot" \
     ["/vagrant/custom/dot.gitconfig"]="/home/vagrant/.gitconfig" \
     ["/vagrant/custom/dot.emacs"]="/home/vagrant/.emacs" \
     ["/vagrant/custom/dot.vimrc"]="/home/vagrant/.vimrc" \

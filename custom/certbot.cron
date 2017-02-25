@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+set -x
+
+pushd /vagrant
+
+# Run letsencrypt certbot to refresh the SSL certs
+./bin/certbot.sh
+
+# Regenerate the configuration files
+make config
+
+# Kill the nginx container
+export ID=`docker ps|grep nginx |awk '{print $1}'`
+docker stop $ID
+docker rm $ID
+
+# Start the nginx container
+docker-compose up -d
+
+popd
