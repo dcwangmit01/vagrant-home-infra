@@ -133,3 +133,12 @@ if ! cat /etc/auto.master |grep auto.autofs; then
     service autofs restart
 fi
 
+# Make the /docker directory and set up for new files/directories to
+#   inherit parent permissions
+if [ ! -d /docker ]; then
+    mkdir /docker
+    # ensure admin group (which includes vagrant user) has access
+    chown -R root:adm /docker
+    # ensure future files created inherit group permissions
+    find /docker -type d -print0 | sudo xargs -0 chmod g+rws
+fi
