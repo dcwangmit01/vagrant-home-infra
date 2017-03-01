@@ -61,7 +61,7 @@ server {
 ## serve https://registry.domain.com
 server {
     listen       443;
-    server_name  registry.{{ nginx.domain.name }};
+    server_name  registry.{{ nginx.domain.name }} registry.paxarm.com;
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
@@ -124,7 +124,7 @@ server {
 ## serve https://s.domain.com
 server {
     listen       443;
-    server_name  s.{{ nginx.domain.name }};
+    server_name  s.{{ nginx.domain.name }} api.{{ nginx.domain.name }} s.paxarm.com api.paxarm.com www.paxarm.com;
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
