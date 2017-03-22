@@ -100,8 +100,8 @@ if [ -f /home/vagrant/.bashrc ] ; then
     cat /vagrant/custom/dot.bashrc >> /home/vagrant/.bashrc
 fi
 
-# Running this script as root, so must use user's point of view
-source /home/vagrant/.bashrc
+# Use user's point of view
+source /vagrant/custom/dot.bashrc
 
 #####################################################################
 # Install Miscellaneous Tools
