@@ -39,6 +39,23 @@ wpdb:
   volumes:
     - /docker/wpdb/var/lib/mysql:/var/lib/mysql
 
+caliwp:
+  image: wordpress
+  links:
+    - caliwpdb:mysql
+  ports:
+    - 10081:80
+  volumes:
+    - /docker/caliwp/var/www/html:/var/www/html
+
+
+caliwpdb:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: {{ caliwpdb.MYSQL_ROOT_PASSWORD }}
+  volumes:
+    - /docker/caliwpdb/var/lib/mysql:/var/lib/mysql
+
 
 git:
   image: rastasheep/ubuntu-sshd

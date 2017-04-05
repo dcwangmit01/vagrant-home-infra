@@ -13,7 +13,8 @@ docker run --rm \
        -m 'dcwangmit01@gmail.com' \
        -d davidwang.com -d www.davidwang.com -d s.davidwang.com -d pvr.davidwang.com \
        -d api.davidwang.com -d registry.davidwang.com -d whatismyip.davidwang.com \
-       -d api.paxarm.com -d registry.paxarm.com -d s.paxarm.com -d www.paxarm.com
+       -d api.paxarm.com -d registry.paxarm.com -d s.paxarm.com -d www.paxarm.com \
+       -d caliwinetrip.com -d www.caliwinetrip.com
 
 # debug options
 #

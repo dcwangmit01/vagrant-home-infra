@@ -14,28 +14,28 @@ server {
 ## redirect https://domain.com to https://www.domain.com
 server {
     listen       443 ssl http2;
-    server_name  {{ nginx.domain.name }};
+    server_name  {{ nginx.domains.davidwang.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
     ssl_certificate    {{ nginx.ssl.pem }};
     ssl_certificate_key    {{ nginx.ssl.key }};
 
-    location /.well-known { # for letsencrypt
+    location /.well-known { # for letsencrypt, NOT SURE IF THIS SECTION NEEDED
         default_type "text/plain";
         alias /var/www/.well-known;
     }
     location / {
-        return       301 https://www.{{ nginx.domain.name }}$request_uri;
+        return       301 https://www.{{ nginx.domains.davidwang.name }}$request_uri;
     }
 }
 
 ## serve https://www.domain.com
 ### Rate limit the below
-limit_req_zone  $binary_remote_addr  zone=one:10m   rate=5r/m;
+limit_req_zone  $binary_remote_addr  zone=domain:10m   rate=5r/m;
 server {
     listen       443 ssl http2;
-    server_name  www.{{ nginx.domain.name }};
+    server_name  www.{{ nginx.domains.davidwang.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
@@ -49,8 +49,51 @@ server {
         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
     }
     location ~* wp\-login\.php {
-         limit_req   zone=one  burst=1 nodelay;
+         limit_req   zone=domain  burst=1 nodelay;
          proxy_pass http://{{ vagrant.address }}:10080;
+         proxy_set_header        Host            $host;
+         proxy_set_header        X-Real-IP       $remote_addr;
+         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+
+## redirect https://cali.com to https://www.cali.com
+server {
+    listen       443 ssl http2;
+    server_name  {{ nginx.domains.cali.name }};
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    {{ nginx.ssl.pem }};
+    ssl_certificate_key    {{ nginx.ssl.key }};
+
+    location / {
+        return       301 https://www.{{ nginx.domains.cali.name }}$request_uri;
+    }
+}
+
+## serve https://www.cali.com
+### Rate limit the below
+limit_req_zone  $binary_remote_addr  zone=cali:10m   rate=5r/m;
+server {
+    listen       443 ssl http2;
+    server_name  www.{{ nginx.domains.cali.name }};
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    {{ nginx.ssl.pem }};
+    ssl_certificate_key    {{ nginx.ssl.key }};
+
+    location / {
+        proxy_pass http://{{ vagrant.address }}:10081;
+        proxy_set_header        Host            $host;
+        proxy_set_header        X-Real-IP       $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location ~* wp\-login\.php {
+         limit_req   zone=cali  burst=1 nodelay;
+         proxy_pass http://{{ vagrant.address }}:10081;
          proxy_set_header        Host            $host;
          proxy_set_header        X-Real-IP       $remote_addr;
          proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -61,7 +104,7 @@ server {
 ## serve https://registry.domain.com
 server {
     listen       443 ssl http2;
-    server_name  registry.{{ nginx.domain.name }} registry.paxarm.com;
+    server_name  registry.{{ nginx.domains.davidwang.name }} registry.{{ nginx.domains.paxarm.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
@@ -96,10 +139,10 @@ server {
 
 ## serve https://pvr.domain.com
 ### Rate limit the below
-limit_req_zone  $binary_remote_addr  zone=two:10m   rate=5r/m;
+limit_req_zone  $binary_remote_addr  zone=pvr:10m   rate=5r/m;
 server {
     listen       443 ssl http2;
-    server_name  pvr.{{ nginx.domain.name }};
+    server_name  pvr.{{ nginx.domains.davidwang.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
@@ -113,7 +156,7 @@ server {
         proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
     }
     location ~* login\.htm {
-         limit_req   zone=two  burst=1 nodelay;
+         limit_req   zone=pvr  burst=1 nodelay;
          proxy_pass http://192.168.3.9:81;
          proxy_set_header        Host            $host;
          proxy_set_header        X-Real-IP       $remote_addr;
@@ -124,8 +167,8 @@ server {
 ## serve https://s.domain.com
 server {
     listen       443 ssl http2;
-    server_name  s.{{ nginx.domain.name }} api.{{ nginx.domain.name }} s.paxarm.com api.paxarm.com www.paxarm.com;
-
+    server_name s.{{ nginx.domains.davidwang.name }} api.{{ nginx.domains.davidwang.name }}
+        s.{{ nginx.domains.paxarm.name }} api.{{ nginx.domains.paxarm.name }} www.{{ nginx.domains.paxarm.name }};
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
     ssl_certificate    {{ nginx.ssl.pem }};
@@ -141,7 +184,7 @@ server {
 ## serve https://whatismyip.domain.com
 server {
     listen       443 ssl http2;
-    server_name  whatismyip.{{ nginx.domain.name }};
+    server_name  whatismyip.{{ nginx.domains.davidwang.name }};
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl    on;
