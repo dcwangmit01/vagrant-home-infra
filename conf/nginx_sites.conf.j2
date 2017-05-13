@@ -195,5 +195,6 @@ server {
     location / {
         return 200 "ip: $remote_addr";
         add_header Content-Type text/plain;
+        add_header Access-Control-Allow-Origin *;
     }
 }
