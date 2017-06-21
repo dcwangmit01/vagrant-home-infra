@@ -42,6 +42,8 @@ server {
     ssl_certificate    {{ nginx.ssl.pem }};
     ssl_certificate_key    {{ nginx.ssl.key }};
 
+    client_max_body_size 32m;  # For uploads, themes, etc
+
     location / {
         proxy_pass http://{{ vagrant.address }}:10080;
         proxy_set_header        Host            $host;
@@ -84,6 +86,8 @@ server {
     ssl    on;
     ssl_certificate    {{ nginx.ssl.pem }};
     ssl_certificate_key    {{ nginx.ssl.key }};
+
+    client_max_body_size 32m;  # For uploads, themes, etc
 
     location / {
         proxy_pass http://{{ vagrant.address }}:10081;

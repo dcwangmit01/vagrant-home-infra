@@ -25,12 +25,12 @@ nginx:
 wp:
   image: wordpress
   links:
-    - wpdb:mysql
+  - wpdb:mysql
   ports:
-    - 10080:80
+  - 10080:80
   volumes:
-    - /docker/wp/var/www/html:/var/www/html
-
+  - /docker/wp/var/www/html:/var/www/html
+  - /vagrant/conf/wordpress_uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
 wpdb:
   image: mariadb
@@ -42,12 +42,12 @@ wpdb:
 caliwp:
   image: wordpress
   links:
-    - caliwpdb:mysql
+  - caliwpdb:mysql
   ports:
-    - 10081:80
+  - 10081:80
   volumes:
-    - /docker/caliwp/var/www/html:/var/www/html
-
+  - /docker/caliwp/var/www/html:/var/www/html
+  - /vagrant/conf/wordpress_uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
 caliwpdb:
   image: mariadb
