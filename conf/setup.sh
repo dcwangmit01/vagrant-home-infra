@@ -142,3 +142,6 @@ if [ ! -d /docker ]; then
     # ensure future files created inherit group permissions
     find /docker -type d -print0 | sudo xargs -0 chmod g+rws
 fi
+
+# Disable SSH Password Authentication (rely on ssh keys)
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
