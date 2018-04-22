@@ -86,6 +86,28 @@ registry: # docker registry
   - /docker/registry/var/lib/registry:/var/lib/registry
 
 
+mongofax:
+  image: mongo:latest
+  restart: always
+  volumes:
+  - /docker/mongomax/data/configdb:/data/configdb
+  - /docker/mongofax/data/db:/data/db
+
+vaporfax:
+  image: bludesign/vapor:latest
+  restart: always
+  ports:
+  - "20080:8080"
+  volumes:
+  - /docker/vaporfax/FaxServer:/vapor
+  environment:
+  - MONGO_HOST=mongofax
+  - MONGO_PORT=27017
+  - VAPOR_HOST=0.0.0.0
+  links:
+  - mongofax
+
+
 #####################################################################
 # Notes
 

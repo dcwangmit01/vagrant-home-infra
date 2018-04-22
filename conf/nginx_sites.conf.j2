@@ -202,3 +202,25 @@ server {
         add_header Access-Control-Allow-Origin *;
     }
 }
+
+
+## serve https://fax.domain.com
+### Rate limit the below
+server {
+    listen       443 ssl http2;
+    server_name  fax.{{ nginx.domains.davidwang.name }};
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl    on;
+    ssl_certificate    {{ nginx.ssl.pem }};
+    ssl_certificate_key    {{ nginx.ssl.key }};
+
+    client_max_body_size 32m;  # For uploads, themes, etc
+
+    location / {
+        proxy_pass http://{{ vagrant.address }}:20080;
+        proxy_set_header        Host            $host;
+        proxy_set_header        X-Real-IP       $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
